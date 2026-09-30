@@ -32,13 +32,14 @@ public class Cliente {
         this.contaCorrente = contaCorrente;
         this.contaPoupanca = contaPoupanca;
 
-        // Começa com a lista vazia
+        // Inicia a lista de notificações vazia
         this.notificacoes = new ArrayList<>();
     }
 
     // Verifica se a senha informada está correta
     public boolean validarSenha(String senhaInformada) {
-        return senhaInformada != null && senhaInformada.equals(this.senha);
+        return senhaInformada != null
+                && senhaInformada.equals(this.senha);
     }
 
     // Altera o nome do cliente
@@ -46,7 +47,9 @@ public class Cliente {
             throws ValorInvalidoException {
 
         if (novoNome == null || novoNome.trim().isEmpty()) {
-            throw new ValorInvalidoException("Nome inválido.");
+            throw new ValorInvalidoException(
+                    "Nome inválido."
+            );
         }
 
         this.nome = novoNome;
@@ -57,7 +60,9 @@ public class Cliente {
             throws LoginInvalidoException {
 
         if (!validarSenha(senhaAtual)) {
-            throw new LoginInvalidoException("Senha atual incorreta.");
+            throw new LoginInvalidoException(
+                    "Senha atual incorreta."
+            );
         }
 
         this.senha = novaSenha;
@@ -82,7 +87,7 @@ public class Cliente {
         this.contaPoupanca = poupanca;
     }
 
-    // Adiciona uma notificação
+    // Adiciona uma nova notificação
     public void adicionarNotificacao(String mensagem) {
         notificacoes.add(mensagem);
     }

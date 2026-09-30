@@ -16,20 +16,20 @@ public class Banco {
     // Lista de clientes cadastrados
     private List<Cliente> clientes;
 
-    // Próximo número disponível para uma conta
+    // Controla o próximo número de conta
     private int proximoNumeroConta = 1000;
 
-    // Cria um banco inicialmente vazio
+    // Cria um banco vazio
     public Banco() {
         clientes = new ArrayList<>();
     }
 
-    // Adiciona um cliente à lista
+    // Adiciona um cliente ao banco
     public void adicionarCliente(Cliente cliente) {
         clientes.add(cliente);
     }
 
-    // Cadastra um novo cliente
+    // Cadastra um cliente e cria suas contas
     public Cliente cadastrarCliente(String nome, String cpf, String senha,
                                     boolean criarPoupanca) {
 
@@ -37,16 +37,16 @@ public class Banco {
         ContaCorrente contaCorrente =
                 new ContaCorrente(proximoNumeroConta++);
 
-        // Por padrão, o cliente não possui poupança
+        // Inicialmente o cliente não possui poupança
         ContaPoupanca contaPoupanca = null;
 
-        // Cria poupança quando solicitado
+        // Cria a poupança quando solicitado
         if (criarPoupanca) {
             contaPoupanca =
                     new ContaPoupanca(proximoNumeroConta++);
         }
 
-        // Cria o cliente com suas contas
+        // Cria o cliente
         Cliente cliente = new Cliente(
                 nome,
                 cpf,
@@ -55,7 +55,7 @@ public class Banco {
                 contaPoupanca
         );
 
-        // Adiciona o cliente ao banco
+        // Salva o cliente no banco
         clientes.add(cliente);
 
         return cliente;
@@ -67,7 +67,7 @@ public class Banco {
 
         for (Cliente cliente : clientes) {
 
-            if (cliente.getCpf().equals(cpf)) {
+            if (cpf != null && cpf.equals(cliente.getCpf())) {
                 return cliente;
             }
         }
@@ -103,11 +103,11 @@ public class Banco {
         );
     }
 
-    // Procura o cliente dono de uma conta
+    // Procura o dono de uma conta
     public Cliente buscarClientePorConta(Conta conta)
             throws ContaNaoEncontradaException {
 
-        // Evita procurar uma conta nula
+        // Não aceita conta nula
         if (conta != null) {
 
             for (Cliente cliente : clientes) {
@@ -125,14 +125,14 @@ public class Banco {
         );
     }
 
-    // Faz o login usando CPF e senha
+    // Faz login usando CPF e senha
     public Cliente login(String cpf, String senha)
             throws ContaNaoEncontradaException, LoginInvalidoException {
 
-        // Procura o cliente pelo CPF
+        // Localiza o cliente
         Cliente cliente = buscarClientePorCpf(cpf);
 
-        // Verifica a senha informada
+        // Valida a senha
         if (!cliente.validarSenha(senha)) {
             throw new LoginInvalidoException(
                     "Senha inválida."
@@ -142,11 +142,11 @@ public class Banco {
         return cliente;
     }
 
-    // Encerra a conta quando todos os saldos estão zerados
+    // Encerra a conta quando não há saldo
     public void encerrarConta(Cliente cliente)
             throws OperacaoNaoPermitidaException {
 
-        // Verifica se a conta corrente possui saldo
+        // Verifica o saldo da conta corrente
         if (cliente.getContaCorrente() != null
                 && cliente.getContaCorrente().getSaldo() != 0) {
 
@@ -164,7 +164,7 @@ public class Banco {
             );
         }
 
-        // Verifica se existe dinheiro investido
+        // Verifica valores investidos
         if (cliente.getContaCorrente() != null
                 && cliente.getContaCorrente().getSaldoInvestido() != 0) {
 
@@ -173,7 +173,7 @@ public class Banco {
             );
         }
 
-        // Remove o cliente da lista do banco
+        // Remove o cliente do banco
         clientes.remove(cliente);
     }
 }

@@ -32,13 +32,13 @@ public class Cliente {
         this.contaCorrente = contaCorrente;
         this.contaPoupanca = contaPoupanca;
 
-        // Começa sem notificações
+        // Começa com a lista vazia
         this.notificacoes = new ArrayList<>();
     }
 
     // Verifica se a senha informada está correta
     public boolean validarSenha(String senhaInformada) {
-        return this.senha.equals(senhaInformada);
+        return senhaInformada != null && senhaInformada.equals(this.senha);
     }
 
     // Altera o nome do cliente
@@ -82,7 +82,7 @@ public class Cliente {
         this.contaPoupanca = poupanca;
     }
 
-    // Adiciona uma notificação à lista
+    // Adiciona uma notificação
     public void adicionarNotificacao(String mensagem) {
         notificacoes.add(mensagem);
     }

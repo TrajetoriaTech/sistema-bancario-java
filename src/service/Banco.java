@@ -24,7 +24,7 @@ public class Banco {
         clientes = new ArrayList<>();
     }
 
-    // Adiciona um cliente já criado
+    // Adiciona um cliente ao banco
     public void adicionarCliente(Cliente cliente) {
         clientes.add(cliente);
     }
@@ -130,7 +130,7 @@ public class Banco {
             throws ContaNaoEncontradaException,
             LoginInvalidoException {
 
-        // Localiza o cliente
+        // Localiza o cliente pelo CPF
         Cliente cliente = buscarClientePorCpf(cpf);
 
         // Verifica a senha
@@ -143,7 +143,7 @@ public class Banco {
         return cliente;
     }
 
-    // Encerra a conta quando todos os saldos estão zerados
+    // Encerra a conta quando os saldos estão zerados
     public void encerrarConta(Cliente cliente)
             throws OperacaoNaoPermitidaException {
 
@@ -174,7 +174,7 @@ public class Banco {
             );
         }
 
-        // Remove o cliente da lista do banco
+        // Remove o cliente do banco
         clientes.remove(cliente);
     }
 }

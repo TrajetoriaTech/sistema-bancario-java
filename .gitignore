@@ -24,3 +24,9 @@ hs_err_pid*
 replay_pid*
 
 .idea/
+
+# Arquivos do IntelliJ
+*.iml
+
+# Arquivos compilados
+out/

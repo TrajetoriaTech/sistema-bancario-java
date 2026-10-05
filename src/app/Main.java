@@ -272,9 +272,13 @@ public class Main {
         if (cp == null) {
             return clienteLogado.getContaCorrente();
         }
-        System.out.println(pergunta + " 1) Corrente  2) Poupança");
-        String op = ler("Opção: ");
-        return op.equals("2") ? cp : clienteLogado.getContaCorrente();
+        while (true) {
+            System.out.println(pergunta + " 1) Corrente  2) Poupança");
+            String op = ler("Opção: ").trim();
+            if (op.equals("1")) return clienteLogado.getContaCorrente();
+            if (op.equals("2")) return cp;
+            System.out.println("Opção inválida. Digite 1 ou 2.");
+        }
     }
 
     private static void mostrarComprovante(Conta c) {

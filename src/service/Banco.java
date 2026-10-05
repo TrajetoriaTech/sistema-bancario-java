@@ -77,29 +77,21 @@ public class Banco {
         );
     }
 
-    // Procura um cliente pelo número da conta
+    // Procura o cliente somente pelo número da conta corrente
     public Cliente buscarClientePorNumero(int numero)
             throws ContaNaoEncontradaException {
 
         for (Cliente cliente : clientes) {
 
-            // Procura na conta corrente
             if (cliente.getContaCorrente() != null
                     && cliente.getContaCorrente().getNumero() == numero) {
-
-                return cliente;
-            }
-
-            // Procura na conta poupança
-            if (cliente.getContaPoupanca() != null
-                    && cliente.getContaPoupanca().getNumero() == numero) {
 
                 return cliente;
             }
         }
 
         throw new ContaNaoEncontradaException(
-                "Conta não encontrada."
+                "Conta corrente não encontrada."
         );
     }
 
@@ -125,15 +117,33 @@ public class Banco {
         );
     }
 
-    // Faz login usando CPF e senha
-    public Cliente login(String cpf, String senha)
+    // Faz login usando CPF ou número da conta corrente
+    public Cliente login(String identificador, String senha)
             throws ContaNaoEncontradaException,
             LoginInvalidoException {
 
-        // Localiza o cliente pelo CPF
-        Cliente cliente = buscarClientePorCpf(cpf);
+        Cliente cliente;
 
-        // Verifica a senha
+        // Primeiro tenta localizar pelo CPF
+        try {
+            cliente = buscarClientePorCpf(identificador);
+
+        } catch (ContaNaoEncontradaException cpfNaoEncontrado) {
+
+            // Se não encontrou pelo CPF, tenta pelo número da conta corrente
+            int numeroConta;
+
+            try {
+                numeroConta = Integer.parseInt(identificador);
+
+            } catch (NumberFormatException e) {
+                throw cpfNaoEncontrado;
+            }
+
+            cliente = buscarClientePorNumero(numeroConta);
+        }
+
+        // Confere a senha depois de encontrar o cliente
         if (!cliente.validarSenha(senha)) {
             throw new LoginInvalidoException(
                     "Senha inválida."
@@ -143,38 +153,56 @@ public class Banco {
         return cliente;
     }
 
-    // Encerra a conta quando os saldos estão zerados
+    // Encerra a conta somente quando não houver dívida,
+    // saldo disponível ou investimento ativo
     public void encerrarConta(Cliente cliente)
             throws OperacaoNaoPermitidaException {
 
-        // Verifica o saldo da conta corrente
+        // Dívida no cheque especial precisa ser quitada primeiro
         if (cliente.getContaCorrente() != null
-                && cliente.getContaCorrente().getSaldo() != 0) {
+                && cliente.getContaCorrente().getSaldo() < 0) {
 
             throw new OperacaoNaoPermitidaException(
-                    "Não é possível encerrar a conta com saldo."
+                    "Não é possível encerrar a conta: "
+                            + "existe uma dívida na conta corrente. "
+                            + "Quite a dívida antes de encerrar."
             );
         }
 
-        // Verifica o saldo da poupança
+        // Saldo positivo na conta corrente precisa ser retirado
+        if (cliente.getContaCorrente() != null
+                && cliente.getContaCorrente().getSaldo() > 0) {
+
+            throw new OperacaoNaoPermitidaException(
+                    "Não é possível encerrar a conta: "
+                            + "há saldo positivo na conta corrente. "
+                            + "Retire ou transfira o valor antes de encerrar."
+            );
+        }
+
+        // Saldo positivo na poupança também precisa ser retirado
         if (cliente.getContaPoupanca() != null
-                && cliente.getContaPoupanca().getSaldo() != 0) {
+                && cliente.getContaPoupanca().getSaldo() > 0) {
 
             throw new OperacaoNaoPermitidaException(
-                    "Não é possível encerrar a conta com saldo."
+                    "Não é possível encerrar a conta: "
+                            + "há saldo positivo na conta poupança. "
+                            + "Retire ou transfira o valor antes de encerrar."
             );
         }
 
-        // Verifica valores investidos
+        // Investimento precisa ser resgatado antes do encerramento
         if (cliente.getContaCorrente() != null
-                && cliente.getContaCorrente().getSaldoInvestido() != 0) {
+                && cliente.getContaCorrente().getSaldoInvestido() > 0) {
 
             throw new OperacaoNaoPermitidaException(
-                    "Não é possível encerrar com investimento ativo."
+                    "Não é possível encerrar a conta: "
+                            + "existe investimento ativo. "
+                            + "Resgate o investimento antes de encerrar."
             );
         }
 
-        // Remove o cliente do banco
+        // Tudo zerado: remove o cliente do banco
         clientes.remove(cliente);
     }
 }

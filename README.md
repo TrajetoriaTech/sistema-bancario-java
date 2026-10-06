@@ -33,10 +33,23 @@ src/
  ├── app/         Telas do console: menus, leitura do teclado e mensagens
  ├── model/       Classes do domínio: Conta, ContaCorrente, ContaPoupanca, Cliente, Transacao, Emprestimo
  ├── service/     Banco: regras que envolvem mais de uma conta (login, cadastro, transferência, Pix)
- └── exception/   Exceções personalizadas (saldo insuficiente, conta bloqueada, etc.)
+ ├── exception/   Exceções personalizadas (saldo insuficiente, conta bloqueada, etc.)
+ └── persistence/ ArquivoBanco: salva e carrega os dados em arquivos .txt
 ```
 
 A separação em camadas garante que **nenhuma regra de negócio fica na tela** (`app/`). As regras ficam em `model/` e `service/`, então a interface pode mudar sem mexer nelas.
+
+## Onde os dados ficam salvos
+
+Os dados são salvos automaticamente em arquivos `.txt` na pasta `dados/`, na raiz do projeto, e carregados quando o programa abre:
+
+| Arquivo | Conteúdo |
+|---|---|
+| `clientes.txt` | Clientes, números das contas, bloqueio e empréstimo |
+| `transacoes.txt` | Todas as transações (o saldo é recalculado a partir delas) |
+| `notificacoes.txt` | Notificações de valores recebidos |
+
+Para começar do zero, basta apagar a pasta `dados/`. Ela não vai para o GitHub (está no `.gitignore`).
 
 ## Regras principais
 
@@ -53,5 +66,5 @@ A separação em camadas garante que **nenhuma regra de negócio fica na tela** 
 | Breno | Contas: `Conta`, `ContaCorrente`, `ContaPoupanca`, `Emprestimo` |
 | Francisco | Cliente, cadastro e login |
 | Alan | Transações: `Transacao`, transferência e Pix |
-| Felipe | Áreas extras: menus de Pix, boleto, investimentos e empréstimo |
+| Felipe | Áreas extras: menus de Pix, boleto, investimentos e empréstimo; salvamento em arquivo |
 | Daniel | Menu principal e integração |

@@ -34,6 +34,24 @@ public class ContaCorrente extends Conta {
         return emprestimo;
     }
 
+    // Usado SÓ ao carregar do arquivo: devolve o empréstimo que já existia.
+    // Não deposita o valor de novo (o depósito já está nas transações).
+    public void restaurarEmprestimo(Emprestimo emprestimo) {
+        this.emprestimo = emprestimo;
+    }
+
+    // Sobrescreve o método da Conta: além do saldo, a conta corrente
+    // também precisa recalcular o saldo investido
+    @Override
+    public void restaurarTransacao(Transacao transacao) {
+        super.restaurarTransacao(transacao);
+        if (transacao.getTipo().equals("INVESTIMENTO")) {
+            saldoInvestido += transacao.getValor();
+        } else if (transacao.getTipo().equals("RESGATE")) {
+            saldoInvestido -= transacao.getValor();
+        }
+    }
+
     public double simularRendimentoInvestimento() {
         return saldoInvestido * 0.008;
     }
@@ -58,7 +76,7 @@ public class ContaCorrente extends Conta {
 
        saldoInvestido += valor;
 
-       getTransacoes().add(
+       registrarTransacao(
             new Transacao("INVESTIMENTO", valor)
             );
     }
@@ -84,7 +102,7 @@ public class ContaCorrente extends Conta {
 
         adicionarSaldo(valor);
 
-        getTransacoes().add(
+        registrarTransacao(
             new Transacao("RESGATE", valor)
         );
     }
@@ -125,7 +143,7 @@ public class ContaCorrente extends Conta {
         if (valor <= getSaldo() + limiteChequeEspecial) {
             removerSaldo(valor);
 
-            getTransacoes().add(
+            registrarTransacao(
                 new Transacao("SAIDA", valor)
             );
 

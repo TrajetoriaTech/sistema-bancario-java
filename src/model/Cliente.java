@@ -55,7 +55,7 @@ public class Cliente {
         this.nome = novoNome;
     }
 
-    // Altera a senha após validar a senha atual
+    // Altera a senha após validar a senha atual.
     public void alterarSenha(String senhaAtual, String novaSenha)
             throws LoginInvalidoException {
 
@@ -65,7 +65,13 @@ public class Cliente {
             );
         }
 
-        this.senha = novaSenha;
+        if (novaSenha == null || novaSenha.isBlank()) {
+            throw new LoginInvalidoException(
+                    "A nova senha não pode ser vazia."
+            );
+        }
+
+        senha = novaSenha;
     }
 
     // Vincula uma conta poupança ao cliente

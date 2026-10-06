@@ -1,6 +1,7 @@
 package service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -18,40 +19,103 @@ import model.ContaPoupanca;
 
 public class Banco {
 
-    // Lista de clientes cadastrados
     private List<Cliente> clientes;
-
-    // Controla o próximo número de conta
     private int proximoNumeroConta = 1000;
 
-    // Cria um banco inicialmente vazio
     public Banco() {
         clientes = new ArrayList<>();
     }
 
-    // Adiciona um cliente ao banco
-    public void adicionarCliente(Cliente cliente) {
-        clientes.add(cliente);
+    // Lista de clientes somente para leitura externa.
+    public List<Cliente> getClientes() {
+        return Collections.unmodifiableList(clientes);
     }
 
-    // Cadastra um cliente e cria suas contas
-    public Cliente cadastrarCliente(String nome, String cpf, String senha,
-                                    boolean criarPoupanca) {
+    // Adiciona cliente e mantém a próxima conta disponível.
+    public void adicionarCliente(Cliente cliente) {
+        clientes.add(cliente);
 
-        // Cria a conta corrente
+        if (cliente.getContaCorrente() != null) {
+            proximoNumeroConta = Math.max(
+                    proximoNumeroConta,
+                    cliente.getContaCorrente().getNumero() + 1
+            );
+        }
+
+        if (cliente.getContaPoupanca() != null) {
+            proximoNumeroConta = Math.max(
+                    proximoNumeroConta,
+                    cliente.getContaPoupanca().getNumero() + 1
+            );
+        }
+    }
+
+    // Abre uma conta poupança para o cliente.
+    public void abrirPoupanca(Cliente cliente)
+            throws OperacaoNaoPermitidaException {
+
+        if (cliente == null) {
+            throw new OperacaoNaoPermitidaException(
+                    "Cliente inválido."
+            );
+        }
+
+        ContaPoupanca poupanca =
+                new ContaPoupanca(proximoNumeroConta);
+
+        cliente.abrirPoupanca(poupanca);
+
+        proximoNumeroConta++;
+    }
+
+    // Cadastra cliente com conta corrente e, opcionalmente, poupança.
+    public Cliente cadastrarCliente(
+            String nome,
+            String cpf,
+            String senha,
+            boolean abrirPoupanca)
+            throws ValorInvalidoException,
+            OperacaoNaoPermitidaException {
+
+        if (nome == null || nome.isBlank()) {
+            throw new ValorInvalidoException(
+                    "Nome não pode ser vazio."
+            );
+        }
+
+        if (cpf == null || cpf.isBlank()) {
+            throw new ValorInvalidoException(
+                    "CPF não pode ser vazio."
+            );
+        }
+
+        if (senha == null || senha.isBlank()) {
+            throw new ValorInvalidoException(
+                    "Senha não pode ser vazia."
+            );
+        }
+
+        try {
+            buscarClientePorCpf(cpf);
+
+            throw new OperacaoNaoPermitidaException(
+                    "Já existe um cliente cadastrado com este CPF."
+            );
+
+        } catch (ContaNaoEncontradaException e) {
+            // CPF ainda não cadastrado. Continua o cadastro.
+        }
+
         ContaCorrente contaCorrente =
                 new ContaCorrente(proximoNumeroConta++);
 
-        // Começa sem conta poupança
         ContaPoupanca contaPoupanca = null;
 
-        // Cria a poupança quando solicitado
-        if (criarPoupanca) {
+        if (abrirPoupanca) {
             contaPoupanca =
                     new ContaPoupanca(proximoNumeroConta++);
         }
 
-        // Cria o cliente
         Cliente cliente = new Cliente(
                 nome,
                 cpf,
@@ -60,18 +124,16 @@ public class Banco {
                 contaPoupanca
         );
 
-        // Salva o cliente no banco
-        clientes.add(cliente);
+        adicionarCliente(cliente);
 
         return cliente;
     }
 
-    // Procura um cliente pelo CPF
+    // Busca cliente pelo CPF.
     public Cliente buscarClientePorCpf(String cpf)
             throws ContaNaoEncontradaException {
 
         for (Cliente cliente : clientes) {
-
             if (cpf != null && cpf.equals(cliente.getCpf())) {
                 return cliente;
             }
@@ -82,44 +144,30 @@ public class Banco {
         );
     }
 
-    // Procura um cliente pelo número da conta
+    // Busca cliente somente pelo número da conta corrente.
     public Cliente buscarClientePorNumero(int numero)
             throws ContaNaoEncontradaException {
 
         for (Cliente cliente : clientes) {
-
-            // Procura na conta corrente
             if (cliente.getContaCorrente() != null
                     && cliente.getContaCorrente().getNumero() == numero) {
-
-                return cliente;
-            }
-
-            // Procura na conta poupança
-            if (cliente.getContaPoupanca() != null
-                    && cliente.getContaPoupanca().getNumero() == numero) {
-
                 return cliente;
             }
         }
 
         throw new ContaNaoEncontradaException(
-                "Conta não encontrada."
+                "Conta corrente não encontrada."
         );
     }
 
-    // Procura o cliente dono de uma conta
+    // Busca o cliente proprietário de uma conta.
     public Cliente buscarClientePorConta(Conta conta)
             throws ContaNaoEncontradaException {
 
-        // Evita procurar uma conta nula
         if (conta != null) {
-
             for (Cliente cliente : clientes) {
-
                 if (cliente.getContaCorrente() == conta
                         || cliente.getContaPoupanca() == conta) {
-
                     return cliente;
                 }
             }
@@ -130,15 +178,30 @@ public class Banco {
         );
     }
 
-    // Faz login usando CPF e senha
-    public Cliente login(String cpf, String senha)
+    // Login por CPF ou número da conta corrente.
+    public Cliente login(String identificador, String senha)
             throws ContaNaoEncontradaException,
             LoginInvalidoException {
 
-        // Localiza o cliente pelo CPF
-        Cliente cliente = buscarClientePorCpf(cpf);
+        Cliente cliente;
 
-        // Verifica a senha
+        try {
+            cliente = buscarClientePorCpf(identificador);
+
+        } catch (ContaNaoEncontradaException cpfNaoEncontrado) {
+
+            int numeroConta;
+
+            try {
+                numeroConta = Integer.parseInt(identificador);
+
+            } catch (NumberFormatException e) {
+                throw cpfNaoEncontrado;
+            }
+
+            cliente = buscarClientePorNumero(numeroConta);
+        }
+
         if (!cliente.validarSenha(senha)) {
             throw new LoginInvalidoException(
                     "Senha inválida."
@@ -148,48 +211,58 @@ public class Banco {
         return cliente;
     }
 
-    // Encerra a conta quando os saldos estão zerados
+    // Encerra a conta somente quando não existem pendências.
     public void encerrarConta(Cliente cliente)
             throws OperacaoNaoPermitidaException {
 
-        // Verifica o saldo da conta corrente
         if (cliente.getContaCorrente() != null
-                && cliente.getContaCorrente().getSaldo() != 0) {
+                && cliente.getContaCorrente().getSaldo() < 0) {
 
             throw new OperacaoNaoPermitidaException(
-                    "Não é possível encerrar a conta com saldo."
+                    "Não é possível encerrar a conta: "
+                            + "existe uma dívida na conta corrente. "
+                            + "Quite a dívida antes de encerrar."
             );
         }
 
-        // Verifica o saldo da poupança
+        if (cliente.getContaCorrente() != null
+                && cliente.getContaCorrente().getSaldo() > 0) {
+
+            throw new OperacaoNaoPermitidaException(
+                    "Não é possível encerrar a conta: "
+                            + "há saldo positivo na conta corrente. "
+                            + "Retire ou transfira o valor antes de encerrar."
+            );
+        }
+
         if (cliente.getContaPoupanca() != null
-                && cliente.getContaPoupanca().getSaldo() != 0) {
+                && cliente.getContaPoupanca().getSaldo() > 0) {
 
             throw new OperacaoNaoPermitidaException(
-                    "Não é possível encerrar a conta com saldo."
+                    "Não é possível encerrar a conta: "
+                            + "há saldo positivo na conta poupança. "
+                            + "Retire ou transfira o valor antes de encerrar."
             );
         }
 
-        // Verifica valores investidos
         if (cliente.getContaCorrente() != null
-                && cliente.getContaCorrente().getSaldoInvestido() != 0) {
+                && cliente.getContaCorrente().getSaldoInvestido() > 0) {
 
             throw new OperacaoNaoPermitidaException(
-                    "Não é possível encerrar com investimento ativo."
+                    "Não é possível encerrar a conta: "
+                            + "existe investimento ativo. "
+                            + "Resgate o investimento antes de encerrar."
             );
         }
 
-        // Remove o cliente do banco
         clientes.remove(cliente);
     }
 
-    // =================================================================
-    // Métodos do ALAN
-    // =================================================================
-
-    // Transferir (funcionalidade #7)
-    // Assinatura atualizada conforme a proposta 1 aprovada pelo grupo
-    public void transferir(Conta origem, Conta destino, double valor)
+    // Realiza transferência entre contas.
+    public void transferir(
+            Conta origem,
+            Conta destino,
+            double valor)
             throws ValorInvalidoException,
             ContaBloqueadaException,
             LimiteDiarioExcedidoException,
@@ -214,22 +287,16 @@ public class Banco {
         // e consumiria limite diário à toa
         if (origem == destino) {
             throw new OperacaoNaoPermitidaException(
-                    "Origem e destino não podem ser a mesma conta.");
+                    "Origem e destino não podem ser a mesma conta."
+            );
         }
 
-        // Descobre os donos ANTES de mexer no dinheiro: se alguma conta
-        // não pertencer a um cliente do banco, nada é transferido
         Cliente donoOrigem = buscarClientePorConta(origem);
         Cliente donoDestino = buscarClientePorConta(destino);
 
-        // 1. Todas as validações (bloqueio, valor, limite diário, saldo e
-        //    cheque especial) acontecem dentro de sacar()
         origem.sacar(valor);
-
-        // 2. Só chega aqui se o saque funcionou: não precisa de rollback
         destino.depositar(valor);
 
-        // 3. Notifica só se o dinheiro veio de OUTRA pessoa
         if (donoOrigem != donoDestino) {
             donoDestino.adicionarNotificacao(
                     "Você recebeu " + operacao + " de R$ "
@@ -237,10 +304,12 @@ public class Banco {
         }
     }
 
-    // Pix (método usado pelo menu do Felipe)
-    // Assinatura atualizada conforme as propostas 1 e 2 aprovadas pelo grupo
-    public void pix(Conta origem, String cpfDestino,
-                    String tipoConta, double valor)
+    // Realiza PIX usando CPF e tipo da conta.
+    public void pix(
+            Conta origem,
+            String cpfDestino,
+            String tipoConta,
+            double valor)
             throws ContaNaoEncontradaException,
             ValorInvalidoException,
             ContaBloqueadaException,
@@ -248,30 +317,32 @@ public class Banco {
             SaldoInsuficienteException,
             OperacaoNaoPermitidaException {
 
-        // tipoConta só aceita "CORRENTE" ou "POUPANCA"
-        if (!"CORRENTE".equals(tipoConta) && !"POUPANCA".equals(tipoConta)) {
+        if (!"CORRENTE".equals(tipoConta)
+                && !"POUPANCA".equals(tipoConta)) {
+
             throw new ValorInvalidoException(
-                    "Tipo de conta inválido: use CORRENTE ou POUPANCA.");
+                    "Tipo de conta inválido: use CORRENTE ou POUPANCA."
+            );
         }
 
-        // 1. Busca o cliente pelo CPF (lança exceção se não existir)
         Cliente cliente = buscarClientePorCpf(cpfDestino);
 
-        // 2. Pega a conta do tipo pedido
         Conta destino;
-        if (tipoConta.equals("CORRENTE")) {
+
+        if ("CORRENTE".equals(tipoConta)) {
             destino = cliente.getContaCorrente();
         } else {
-            destino = cliente.getContaPoupanca(); // pode ser null
+            destino = cliente.getContaPoupanca();
         }
 
-        // Cliente não tem o tipo de conta pedido
         if (destino == null) {
             throw new ContaNaoEncontradaException(
-                    "O destinatário não possui conta do tipo " + tipoConta + ".");
+                    "O destinatário não possui conta do tipo "
+                            + tipoConta + "."
+            );
         }
 
-        // 3. Daqui pra frente é uma movimentação normal, com aviso de Pix
+        // Daqui pra frente é uma movimentação normal, com aviso de Pix
         movimentar(origem, destino, valor, "um Pix");
     }
 }

@@ -3,7 +3,9 @@ package app;
 import java.util.List;
 import java.util.Scanner;
 
+import model.Cliente;
 import model.Conta;
+import model.ContaPoupanca;
 import model.Transacao;
 
 /**
@@ -28,6 +30,27 @@ final class MenuUtil {
     static boolean confirmar(Scanner in, String pergunta) {
         System.out.print(pergunta + " (s/n): ");
         return in.nextLine().trim().equalsIgnoreCase("s");
+    }
+
+    // Pergunta de qual conta do cliente sai o dinheiro.
+    // Quem não tem poupança usa direto a corrente, sem pergunta.
+    // Repete a pergunta até a pessoa digitar 1 ou 2.
+    static Conta escolherConta(Cliente cliente, Scanner in, String pergunta) {
+        ContaPoupanca poupanca = cliente.getContaPoupanca();
+        if (poupanca == null) {
+            return cliente.getContaCorrente();
+        }
+        while (true) {
+            System.out.print(pergunta + " 1) Corrente  2) Poupança: ");
+            String opcao = in.nextLine().trim();
+            if (opcao.equals("1")) {
+                return cliente.getContaCorrente();
+            }
+            if (opcao.equals("2")) {
+                return poupanca;
+            }
+            System.out.println("Opção inválida. Digite 1 ou 2.");
+        }
     }
 
     // Mostra a última transação da conta, que é a da operação recém-feita.

@@ -19,10 +19,18 @@ public class Transacao {
     private final double valor;
     private final LocalDateTime data;
 
+    // Construtor usado nas operações do dia a dia: a data é "agora".
+    // Reaproveita o construtor de baixo com this(...)
     public Transacao(String tipo, double valor) {
+        this(tipo, valor, LocalDateTime.now());
+    }
+
+    // Sobrecarga (overload): mesmo nome, parâmetros diferentes.
+    // Usado ao carregar do arquivo .txt, para manter a data original.
+    public Transacao(String tipo, double valor, LocalDateTime data) {
         this.tipo = tipo;
         this.valor = valor;
-        this.data = LocalDateTime.now(); // data = agora
+        this.data = data;
     }
 
     // Uma linha no formato: 23/09/2026 14:32 | ENTRADA | R$ 500,00

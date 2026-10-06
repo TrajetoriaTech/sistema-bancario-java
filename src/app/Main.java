@@ -5,6 +5,7 @@ import model.Conta;
 import model.ContaCorrente;
 import model.ContaPoupanca;
 import model.Transacao;
+import persistence.ArquivoBanco;
 import service.Banco;
 
 import java.util.List;
@@ -18,7 +19,8 @@ import java.util.Scanner;
 public class Main {
 
     private static final Scanner in = new Scanner(System.in);
-    private static final Banco banco = new Banco();
+    // Carrega os dados salvos em dados/ (ou começa vazio na primeira vez)
+    private static final Banco banco = ArquivoBanco.carregar();
     private static Cliente clienteLogado = null;
 
     public static void main(String[] args) {
@@ -29,6 +31,9 @@ public class Main {
             } else {
                 menuPrincipal();
             }
+            // Salva depois de cada ação: se o programa for fechado de repente,
+            // no máximo a última ação se perde
+            ArquivoBanco.salvar(banco);
         }
         System.out.println("Até logo!");
     }
@@ -237,9 +242,11 @@ public class Main {
                     System.out.println("Senha alterada.");
                     break;
                 case "3":
-                    // O número da poupança é gerado pelo Banco (regra do Francisco);
-                    // aqui só se chama o que o documento define.
-                    System.out.println("TODO: integrar com Francisco (como obter o número da nova poupança).");
+                    // O número da poupança é gerado pelo Banco (Francisco).
+                    // Se o cliente já tiver poupança, o Banco lança exceção e cai no catch.
+                    banco.abrirPoupanca(clienteLogado);
+                    System.out.println("Poupança aberta! Número da sua poupança: "
+                            + clienteLogado.getContaPoupanca().getNumero());
                     break;
                 case "0": break;
                 default: System.out.println("Opção inválida.");

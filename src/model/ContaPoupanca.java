@@ -18,9 +18,14 @@ public class ContaPoupanca extends Conta {
 
         double rendimento = getSaldo() * taxaRendimento;
 
+        // Saldo zerado não rende nada: não registra uma transação de R$ 0,00
+        if (rendimento <= 0) {
+            return;
+        }
+
         adicionarSaldo(rendimento);
 
-        getTransacoes().add(
+        registrarTransacao(
             new Transacao("ENTRADA", rendimento)
         );
     }

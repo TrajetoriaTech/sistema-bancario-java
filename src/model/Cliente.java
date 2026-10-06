@@ -103,6 +103,12 @@ public class Cliente {
         return nome;
     }
 
+    // Retorna a senha. Usado só para salvar no arquivo .txt
+    // (o projeto não tem segurança real; num sistema real se guardaria um hash)
+    public String getSenha() {
+        return senha;
+    }
+
     // Retorna o CPF
     public String getCpf() {
         return cpf;

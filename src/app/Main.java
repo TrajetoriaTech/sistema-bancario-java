@@ -102,8 +102,8 @@ public class Main {
             case "4": sacar(); break;
             case "5": transferir(); break;
             case "6": /* TODO Felipe: chamar menu do Pix */ emIntegracao(); break;
-            case "7": /* TODO Felipe: chamar menu do boleto */ emIntegracao(); break;
-            case "8": /* TODO Felipe: chamar menu de investimentos */ emIntegracao(); break;
+            case "7": MenuBoleto.exibir(banco, clienteLogado, in); break;
+            case "8": MenuInvestimentos.exibir(banco, clienteLogado, in); break;
             case "9": /* TODO Felipe: chamar menu de empréstimo */ emIntegracao(); break;
             case "10": notificacoes(); break;
             case "11": cartaoDeCredito(); break;
@@ -272,9 +272,13 @@ public class Main {
         if (cp == null) {
             return clienteLogado.getContaCorrente();
         }
-        System.out.println(pergunta + " 1) Corrente  2) Poupança");
-        String op = ler("Opção: ");
-        return op.equals("2") ? cp : clienteLogado.getContaCorrente();
+        while (true) {
+            System.out.println(pergunta + " 1) Corrente  2) Poupança");
+            String op = ler("Opção: ").trim();
+            if (op.equals("1")) return clienteLogado.getContaCorrente();
+            if (op.equals("2")) return cp;
+            System.out.println("Opção inválida. Digite 1 ou 2.");
+        }
     }
 
     private static void mostrarComprovante(Conta c) {

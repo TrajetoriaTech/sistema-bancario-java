@@ -30,3 +30,6 @@ replay_pid*
 
 # Arquivos compilados
 out/
+
+# Dados salvos pelo programa (cada máquina tem os seus)
+dados/

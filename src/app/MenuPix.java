@@ -29,7 +29,7 @@ public class MenuPix {
 
             // 2) CPF do destinatário: tira ponto, traço e espaço
             System.out.print("CPF do destinatário: ");
-            String cpf = in.nextLine().replace(".", "").replace("-", "").replace(" ", "");
+            String cpf = MenuUtil.limparCpf(in.nextLine());
 
             // Busca antes de pedir o valor, para mostrar o nome na confirmação
             // (como os apps de banco fazem). Se não existir, cai no catch.

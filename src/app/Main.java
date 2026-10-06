@@ -51,7 +51,8 @@ public class Main {
 
     private static void login() {
         try {
-            String id = ler("CPF ou número da conta corrente: ");
+            // Tira ponto e traço, caso a pessoa digite o CPF formatado
+            String id = MenuUtil.limparCpf(ler("CPF ou número da conta corrente: "));
             String senha = ler("Senha: ");
             clienteLogado = banco.login(id, senha);
             System.out.println("Bem-vindo(a), " + clienteLogado.getNome() + "!");
@@ -63,7 +64,12 @@ public class Main {
     private static void cadastrar() {
         try {
             String nome = ler("Nome: ");
-            String cpf = ler("CPF: ");
+            String cpf = MenuUtil.limparCpf(ler("CPF: "));
+            // Validação de ENTRADA (formato), feita com if, sem exceção
+            if (!MenuUtil.cpfValido(cpf)) {
+                System.out.println("CPF inválido: digite os 11 números.");
+                return;
+            }
             String senha = ler("Senha: ");
             boolean poupanca = ler("Deseja abrir poupança também? (s/n): ").equalsIgnoreCase("s");
             Cliente novo = banco.cadastrarCliente(nome, cpf, senha, poupanca);
@@ -101,10 +107,10 @@ public class Main {
             case "3": depositar(); break;
             case "4": sacar(); break;
             case "5": transferir(); break;
-            case "6": /* TODO Felipe: chamar menu do Pix */ emIntegracao(); break;
+            case "6": MenuPix.exibir(banco, clienteLogado, in); break;
             case "7": MenuBoleto.exibir(banco, clienteLogado, in); break;
             case "8": MenuInvestimentos.exibir(banco, clienteLogado, in); break;
-            case "9": /* TODO Felipe: chamar menu de empréstimo */ emIntegracao(); break;
+            case "9": MenuEmprestimo.exibir(banco, clienteLogado, in); break;
             case "10": notificacoes(); break;
             case "11": cartaoDeCredito(); break;
             case "12": bloquearDesbloquear(); break;
@@ -113,10 +119,6 @@ public class Main {
             case "0": logout(); break;
             default: System.out.println("Opção inválida.");
         }
-    }
-
-    private static void emIntegracao() {
-        System.out.println("Esta área ainda está sendo integrada.");
     }
 
     // ---------------------------------------------------------------- operações de conta

@@ -197,6 +197,19 @@ public class Banco {
             OperacaoNaoPermitidaException,
             ContaNaoEncontradaException {
 
+        movimentar(origem, destino, valor, "uma transferência");
+    }
+
+    // Faz a movimentação de verdade. É usado pelo transferir() e pelo pix(),
+    // que só mudam o texto da notificação ("uma transferência" ou "um Pix").
+    private void movimentar(Conta origem, Conta destino, double valor, String operacao)
+            throws ValorInvalidoException,
+            ContaBloqueadaException,
+            LimiteDiarioExcedidoException,
+            SaldoInsuficienteException,
+            OperacaoNaoPermitidaException,
+            ContaNaoEncontradaException {
+
         // Mesma conta: não move dinheiro, só sujaria o extrato
         // e consumiria limite diário à toa
         if (origem == destino) {
@@ -219,7 +232,7 @@ public class Banco {
         // 3. Notifica só se o dinheiro veio de OUTRA pessoa
         if (donoOrigem != donoDestino) {
             donoDestino.adicionarNotificacao(
-                    "Você recebeu uma transferência de R$ "
+                    "Você recebeu " + operacao + " de R$ "
                             + String.format(Locale.forLanguageTag("pt-BR"), "%.2f", valor));
         }
     }
@@ -258,7 +271,7 @@ public class Banco {
                     "O destinatário não possui conta do tipo " + tipoConta + ".");
         }
 
-        // 3. Daqui pra frente é uma transferência normal
-        transferir(origem, destino, valor);
+        // 3. Daqui pra frente é uma movimentação normal, com aviso de Pix
+        movimentar(origem, destino, valor, "um Pix");
     }
 }

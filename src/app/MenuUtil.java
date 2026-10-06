@@ -32,6 +32,25 @@ final class MenuUtil {
         return in.nextLine().trim().equalsIgnoreCase("s");
     }
 
+    // Tira ponto, traço e espaço do CPF: "111.222.333-44" vira "11122233344".
+    // Usado no cadastro, no login e no Pix, para os três ficarem compatíveis.
+    static String limparCpf(String cpf) {
+        return cpf.replace(".", "").replace("-", "").replace(" ", "");
+    }
+
+    // Confere se o CPF (já limpo) tem exatamente 11 números
+    static boolean cpfValido(String cpf) {
+        if (cpf.length() != 11) {
+            return false;
+        }
+        for (int i = 0; i < cpf.length(); i++) {
+            if (!Character.isDigit(cpf.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     // Pergunta de qual conta do cliente sai o dinheiro.
     // Quem não tem poupança usa direto a corrente, sem pergunta.
     // Repete a pergunta até a pessoa digitar 1 ou 2.

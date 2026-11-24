@@ -7,6 +7,7 @@ import model.Cliente;
 import model.Conta;
 import model.ContaPoupanca;
 import model.Transacao;
+import util.Entrada;
 
 /**
  * Funções de tela repetidas nos menus das áreas extras (Felipe):
@@ -23,7 +24,7 @@ final class MenuUtil {
     // Se o texto não for número, o próprio Java lança NumberFormatException.
     static double lerValor(Scanner in) {
         System.out.print("Valor: R$ ");
-        return Double.parseDouble(in.nextLine().trim().replace(",", "."));
+        return Entrada.converterValor(in.nextLine());
     }
 
     // Faz uma pergunta de sim/não. Só "s" ou "S" confirma.
@@ -34,21 +35,14 @@ final class MenuUtil {
 
     // Tira ponto, traço e espaço do CPF: "111.222.333-44" vira "11122233344".
     // Usado no cadastro, no login e no Pix, para os três ficarem compatíveis.
+    // (a regra de formato fica no util.Entrada, compartilhada com a interface gráfica)
     static String limparCpf(String cpf) {
-        return cpf.replace(".", "").replace("-", "").replace(" ", "");
+        return Entrada.limparCpf(cpf);
     }
 
     // Confere se o CPF (já limpo) tem exatamente 11 números
     static boolean cpfValido(String cpf) {
-        if (cpf.length() != 11) {
-            return false;
-        }
-        for (int i = 0; i < cpf.length(); i++) {
-            if (!Character.isDigit(cpf.charAt(i))) {
-                return false;
-            }
-        }
-        return true;
+        return Entrada.cpfValido(cpf);
     }
 
     // Pergunta de qual conta do cliente sai o dinheiro.

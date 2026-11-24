@@ -2,7 +2,7 @@
 
 Projeto em grupo da disciplina **Projeto de Programação** (Prof. Fernando Henrique).
 
-Simulador de internet banking que roda no **console**, feito em **Java puro** (sem bibliotecas externas), aplicando Programação Orientada a Objetos, tratamento de exceções, coleções e leitura/escrita de arquivos.
+Simulador de internet banking em **Java 21**, com duas interfaces sobre as mesmas regras: uma de **console** e uma **gráfica, em JavaFX**. Aplica Programação Orientada a Objetos, tratamento de exceções, coleções, leitura/escrita de arquivos e interface gráfica.
 
 ## Funcionalidades
 
@@ -20,28 +20,48 @@ Simulador de internet banking que roda no **console**, feito em **Java puro** (s
 
 ## Como rodar
 
+O projeto usa **Maven** só para baixar o JavaFX: não precisa instalar nada além do JDK.
+
 1. Instalar o **JDK 21**
-2. Abrir a pasta do projeto no **IntelliJ IDEA**
-3. Em *File → Project Structure*, escolher o SDK **21**
-4. Clicar com o botão direito na pasta `src` → *Mark Directory as* → **Sources Root**
-5. Abrir `src/app/Main.java` e rodar (▶ ou `Shift+F10`)
+2. Abrir a pasta do projeto no **IntelliJ IDEA**. Se aparecer *"Maven build script found"*, clicar em **Load Maven Project** (ou botão direito no `pom.xml` → *Add as Maven Project*)
+3. Em *File → Project Structure*, conferir o SDK **21**
+4. Rodar a versão desejada (▶ ou `Shift+F10`):
+   - **Interface gráfica:** `src/application/Launcher.java`
+   - **Console:** `src/app/Main.java`
+
+Pelo terminal, a interface gráfica também roda com `mvn javafx:run`.
 
 ## Estrutura das pastas
 
+A interface gráfica segue o padrão **MVC** (Model, View, Controller):
+
 ```
 src/
- ├── app/         Telas do console: menus, leitura do teclado e mensagens
- ├── model/       Classes do domínio: Conta, ContaCorrente, ContaPoupanca, Cliente, Transacao, Emprestimo
- ├── service/     Banco: regras que envolvem mais de uma conta (login, cadastro, transferência, Pix)
+ ├── application/ Inicia a interface gráfica: Launcher (main) e App (extends Application)
+ ├── controller/  CONTROLLER: liga cada tela ao model (LoginController, BoletoController...)
+ │                e as classes de apoio das telas (Navegador, Sessao, Mensagem, Formato, Tela)
+ ├── model/       MODEL: Conta, ContaCorrente, ContaPoupanca, Cliente, Transacao, Emprestimo
+ ├── service/     MODEL: Banco, regras que envolvem mais de uma conta (login, cadastro, transferência, Pix)
  ├── exception/   Exceções personalizadas (saldo insuficiente, conta bloqueada, etc.)
- └── persistence/ ArquivoBanco: salva e carrega os dados em arquivos .txt
+ ├── persistence/ ArquivoBanco: salva e carrega os dados em arquivos .txt
+ ├── util/        Entrada: validação do que é digitado, usada pelo console e pela interface gráfica
+ └── app/         Interface de console (1ª parte): menus, leitura do teclado e mensagens
+resources/
+ └── view/        VIEW: as telas (.fxml) e o estilo visual (estilo.css)
 ```
 
-A separação em camadas garante que **nenhuma regra de negócio fica na tela** (`app/`). As regras ficam em `model/` e `service/`, então a interface pode mudar sem mexer nelas.
+| Quero mudar... | Onde mexo |
+|---|---|
+| Um componente da tela (botão, campo, tabela) | `.fxml` em `resources/view/` (Scene Builder) |
+| A aparência (cor, fonte, cursor, efeito ao passar o mouse) | `resources/view/estilo.css` |
+| O que acontece ao clicar num botão | O controller da tela, em `src/controller/` |
+| Uma regra de negócio (saldo, limite, juros) | `src/model/` ou `src/service/` |
+
+A separação em camadas garante que **nenhuma regra de negócio fica na tela** (`app/`, `controller/` e `view/`). As regras ficam em `model/` e `service/`, e por isso a interface gráfica foi criada sem mudar nenhuma regra: o console e a interface gráfica chamam os mesmos métodos.
 
 ## Onde os dados ficam salvos
 
-Os dados são salvos automaticamente em arquivos `.txt` na pasta `dados/`, na raiz do projeto, e carregados quando o programa abre:
+Os dados são salvos automaticamente em arquivos `.txt` na pasta `dados/`, na raiz do projeto, e carregados quando o programa abre. O console e a interface gráfica usam os mesmos arquivos:
 
 | Arquivo | Conteúdo |
 |---|---|

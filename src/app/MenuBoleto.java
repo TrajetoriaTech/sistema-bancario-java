@@ -9,6 +9,7 @@ import exception.ValorInvalidoException;
 import model.Cliente;
 import model.ContaCorrente;
 import service.Banco;
+import util.Entrada;
 
 /**
  * Menu de pagamento de boleto (Felipe).
@@ -18,7 +19,7 @@ import service.Banco;
  */
 public class MenuBoleto {
 
-    private static final int TAMANHO_CODIGO = 44;
+    private static final int TAMANHO_CODIGO = Entrada.TAMANHO_BOLETO;
 
     public static void exibir(Banco banco, Cliente cliente, Scanner in) {
         System.out.println("\n--- Pagar boleto ---");
@@ -67,15 +68,8 @@ public class MenuBoleto {
     }
 
     // Verifica se o texto tem exatamente 44 caracteres e todos são dígitos
+    // (a regra de formato fica no util.Entrada, compartilhada com a interface gráfica)
     private static boolean codigoValido(String codigo) {
-        if (codigo.length() != TAMANHO_CODIGO) {
-            return false;
-        }
-        for (int i = 0; i < codigo.length(); i++) {
-            if (!Character.isDigit(codigo.charAt(i))) {
-                return false;
-            }
-        }
-        return true;
+        return Entrada.codigoBoletoValido(codigo);
     }
 }

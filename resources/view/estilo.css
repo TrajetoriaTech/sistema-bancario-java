@@ -1,0 +1,203 @@
+/*
+ * Estilo visual de todas as telas (carregado uma vez pelo Navegador).
+ * As cores ficam definidas no .root e são reaproveitadas pelo nome:
+ * para mudar a cor principal do sistema, basta mudar -cor-principal.
+ */
+.root {
+    -cor-principal: #1F4E99;
+    -cor-principal-escura: #163A73;
+    -cor-menu: #14213A;
+    -cor-menu-texto: #C9D3E6;
+    -cor-fundo: #F2F4F8;
+    -cor-cartao: #FFFFFF;
+    -cor-borda: #D7DDE6;
+    -cor-texto: #17202B;
+    -cor-texto-secundario: #5A6577;
+    -cor-sucesso: #1D7347;
+    -cor-sucesso-fundo: #E1F2E8;
+    -cor-erro: #B0281F;
+    -cor-erro-fundo: #FBE7E4;
+
+    -fx-font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    -fx-font-size: 14px;
+    -fx-text-fill: -cor-texto;
+    -fx-background-color: -cor-fundo;
+}
+
+/* ---------- textos ---------- */
+.titulo-tela {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -cor-texto;
+}
+.texto-secundario {
+    -fx-text-fill: -cor-texto-secundario;
+}
+.rotulo-campo {
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+}
+
+/* ---------- área central das telas ---------- */
+.conteudo {
+    -fx-padding: 28 32 28 32;
+    -fx-background-color: -cor-fundo;
+}
+.formulario {
+    -fx-background-color: -cor-cartao;
+    -fx-border-color: -cor-borda;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-padding: 22;
+}
+
+/* ---------- campos ---------- */
+.text-field, .password-field, .combo-box {
+    -fx-background-color: -cor-cartao;
+    -fx-border-color: -cor-borda;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 8 10 8 10;
+}
+.text-field:focused, .password-field:focused, .combo-box:focused {
+    -fx-border-color: -cor-principal;
+}
+
+/* ---------- botões ---------- */
+.botao-principal {
+    -fx-background-color: -cor-principal;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 6;
+    -fx-padding: 9 20 9 20;
+    -fx-cursor: hand;
+}
+.botao-principal:hover {
+    -fx-background-color: -cor-principal-escura;
+}
+.botao-secundario {
+    -fx-background-color: transparent;
+    -fx-border-color: -cor-borda;
+    -fx-border-radius: 6;
+    -fx-text-fill: -cor-texto;
+    -fx-padding: 8 18 8 18;
+    -fx-cursor: hand;
+}
+.botao-secundario:hover {
+    -fx-border-color: -cor-principal;
+    -fx-text-fill: -cor-principal;
+}
+
+/* ---------- mensagens de retorno (classe Mensagem) ---------- */
+.mensagem-erro {
+    -fx-text-fill: -cor-erro;
+    -fx-background-color: -cor-erro-fundo;
+    -fx-background-radius: 6;
+    -fx-padding: 8 12 8 12;
+}
+.mensagem-sucesso {
+    -fx-text-fill: -cor-sucesso;
+    -fx-background-color: -cor-sucesso-fundo;
+    -fx-background-radius: 6;
+    -fx-padding: 8 12 8 12;
+}
+
+/* ---------- login ---------- */
+.fundo-login {
+    -fx-background-color: linear-gradient(to bottom right, -cor-menu, -cor-principal);
+}
+.cartao-login {
+    -fx-background-color: -cor-cartao;
+    -fx-background-radius: 12;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.25), 24, 0, 0, 6);
+}
+.marca {
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -cor-principal;
+}
+
+/* ---------- menu lateral e cabeçalho (tela principal) ---------- */
+.rolagem-menu, .rolagem-menu > .viewport {
+    -fx-background-color: -cor-menu;
+    -fx-background: -cor-menu;
+}
+.menu-lateral {
+    -fx-background-color: -cor-menu;
+    -fx-pref-width: 220;
+    -fx-min-width: 220;
+}
+.marca-menu {
+    -fx-text-fill: white;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-padding: 18 20 10 20;
+}
+.rolagem-menu .scroll-bar:vertical {
+    -fx-background-color: transparent;
+    -fx-pref-width: 8;
+}
+.rolagem-menu .scroll-bar .thumb {
+    -fx-background-color: rgba(255, 255, 255, 0.2);
+    -fx-background-radius: 4;
+}
+.rolagem-menu .scroll-bar .increment-button,
+.rolagem-menu .scroll-bar .decrement-button {
+    -fx-padding: 0;
+}
+.grupo-menu {
+    -fx-text-fill: #7F8CA6;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-padding: 12 8 3 8;
+}
+.item-menu {
+    -fx-background-color: transparent;
+    -fx-text-fill: -cor-menu-texto;
+    -fx-alignment: center-left;
+    -fx-padding: 7 10 7 10;
+    -fx-background-radius: 6;
+    -fx-cursor: hand;
+}
+.item-menu:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.08);
+    -fx-text-fill: white;
+}
+.item-menu-ativo, .item-menu-ativo:hover {
+    -fx-background-color: -cor-principal;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+.cabecalho {
+    -fx-background-color: -cor-cartao;
+    -fx-border-color: transparent transparent -cor-borda transparent;
+}
+.nome-cliente {
+    -fx-font-weight: bold;
+    -fx-font-size: 15px;
+}
+
+/* ---------- cartões do Início ---------- */
+.cartao {
+    -fx-background-color: -cor-cartao;
+    -fx-border-color: -cor-borda;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-padding: 18;
+    -fx-pref-width: 240;
+}
+.rotulo-cartao {
+    -fx-text-fill: -cor-texto-secundario;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+.valor-cartao {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+}
+
+/* ---------- tabelas (ex.: extrato) ---------- */
+.table-view {
+    -fx-background-color: -cor-cartao;
+    -fx-border-color: -cor-borda;
+}

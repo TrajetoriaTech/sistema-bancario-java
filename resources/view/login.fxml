@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<!-- Tela de login (base). Controller: LoginController -->
+<StackPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="controller.LoginController" styleClass="fundo-login">
+    <VBox styleClass="cartao-login" spacing="14" maxWidth="380" maxHeight="-Infinity">
+        <padding><Insets top="32" right="32" bottom="28" left="32"/></padding>
+
+        <Label text="Internet Banking" styleClass="marca"/>
+        <Label text="Entre com seu CPF ou o número da conta corrente." styleClass="texto-secundario" wrapText="true"/>
+
+        <VBox spacing="6">
+            <Label text="CPF ou número da conta" styleClass="rotulo-campo"/>
+            <TextField fx:id="campoIdentificador" promptText="000.000.000-00"/>
+        </VBox>
+
+        <VBox spacing="6">
+            <Label text="Senha" styleClass="rotulo-campo"/>
+            <PasswordField fx:id="campoSenha" onAction="#entrar"/>
+        </VBox>
+
+        <Label fx:id="rotuloMensagem" wrapText="true"/>
+
+        <Button text="Entrar" onAction="#entrar" defaultButton="true" styleClass="botao-principal" maxWidth="Infinity"/>
+
+        <HBox alignment="CENTER" spacing="4">
+            <Label text="Ainda não tem conta?" styleClass="texto-secundario"/>
+            <Hyperlink text="Criar conta" onAction="#abrirCadastro"/>
+        </HBox>
+    </VBox>
+</StackPane>

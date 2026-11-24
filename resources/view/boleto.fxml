@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<!-- TELA MODELO: todas as telas de operação seguem esta estrutura.
+     título → formulário (rótulo + campo) → mensagem → botões.
+     Controller: BoletoController -->
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="controller.BoletoController" styleClass="conteudo" spacing="20">
+
+    <VBox spacing="4">
+        <Label text="Pagar boleto" styleClass="titulo-tela"/>
+        <Label fx:id="rotuloConta" styleClass="texto-secundario" wrapText="true"/>
+    </VBox>
+
+    <VBox styleClass="formulario" spacing="14" maxWidth="520">
+        <VBox spacing="6">
+            <Label text="Código de barras (44 números)" styleClass="rotulo-campo"/>
+            <TextField fx:id="campoCodigo" promptText="Digite ou cole o código"/>
+        </VBox>
+        <VBox spacing="6">
+            <Label text="Valor" styleClass="rotulo-campo"/>
+            <TextField fx:id="campoValor" promptText="Ex.: 150,90" maxWidth="200"/>
+        </VBox>
+
+        <Label fx:id="rotuloMensagem" wrapText="true"/>
+
+        <HBox spacing="10">
+            <Button text="Pagar" onAction="#pagar" defaultButton="true" styleClass="botao-principal"/>
+            <Button text="Limpar" onAction="#limpar" styleClass="botao-secundario"/>
+        </HBox>
+    </VBox>
+</VBox>

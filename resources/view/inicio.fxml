@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.VBox?>
+
+<!-- Resumo da conta. Controller: InicioController -->
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="controller.InicioController" styleClass="conteudo" spacing="20">
+
+    <VBox spacing="4">
+        <Label text="Início" styleClass="titulo-tela"/>
+        <Label fx:id="rotuloResumo" styleClass="texto-secundario"/>
+    </VBox>
+
+    <FlowPane hgap="16" vgap="16">
+        <VBox styleClass="cartao" spacing="6">
+            <Label fx:id="rotuloCorrente" styleClass="rotulo-cartao"/>
+            <Label fx:id="valorCorrente" styleClass="valor-cartao"/>
+            <Label fx:id="detalheCorrente" styleClass="texto-secundario" wrapText="true"/>
+        </VBox>
+        <VBox styleClass="cartao" spacing="6">
+            <Label fx:id="rotuloPoupanca" styleClass="rotulo-cartao"/>
+            <Label fx:id="valorPoupanca" styleClass="valor-cartao"/>
+            <Label fx:id="detalhePoupanca" styleClass="texto-secundario" wrapText="true"/>
+        </VBox>
+        <VBox styleClass="cartao" spacing="6">
+            <Label text="Investido" styleClass="rotulo-cartao"/>
+            <Label fx:id="valorInvestido" styleClass="valor-cartao"/>
+            <Label fx:id="detalheInvestido" styleClass="texto-secundario" wrapText="true"/>
+        </VBox>
+        <VBox styleClass="cartao" spacing="6">
+            <Label text="Empréstimo" styleClass="rotulo-cartao"/>
+            <Label fx:id="valorEmprestimo" styleClass="valor-cartao"/>
+            <Label fx:id="detalheEmprestimo" styleClass="texto-secundario" wrapText="true"/>
+        </VBox>
+    </FlowPane>
+</VBox>
